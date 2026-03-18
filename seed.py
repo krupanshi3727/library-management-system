@@ -26,10 +26,15 @@ def hash_password(password):
 def seed():
     app = create_app()
     with app.app_context():
-        # Drop and recreate all tables
-        db.drop_all()
+        # Create tables if they don't exist
         db.create_all()
-        print('[OK] Database tables created.')
+        
+        # Check if already seeded
+        if User.query.first():
+            print('[OK] Database already contains users. Skipping seed.')
+            return
+            
+        print('[OK] Database tables ready. Starting seed...')
 
         # ── Admin User ──
         admin = User(
