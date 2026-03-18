@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Login – Library Management System{% endblock %}
+
+{% block public_content %}
+<div class="login-page d-flex align-items-center justify-content-center min-vh-100">
+    <div class="login-card card shadow-lg border-0" style="max-width: 440px; width: 100%;">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="login-icon mb-3">
+                    <i class="bi bi-book-half display-3 text-primary"></i>
+                </div>
+                <h2 class="fw-bold">Library Management</h2>
+                <p class="text-muted">Sign in to your account</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-medium">
+                        <i class="bi bi-envelope me-1"></i> Email
+                    </label>
+                    {{ form.email(class="form-control form-control-lg", placeholder="Enter your email", id="email") }}
+                    {% for error in form.email.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-medium">
+                        <i class="bi bi-lock me-1"></i> Password
+                    </label>
+                    {{ form.password(class="form-control form-control-lg", placeholder="Enter your password", id="password") }}
+                    {% for error in form.password.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-medium">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Contact library admin for account registration
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

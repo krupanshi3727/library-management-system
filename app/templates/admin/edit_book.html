@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Edit Book – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.books') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Books
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-pencil me-2"></i>Edit Book: {{ book.title }}</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-medium">{{ form.title.label.text }}</label>
+                            {{ form.title(class="form-control") }}
+                            {% for e in form.title.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.isbn.label.text }}</label>
+                            {{ form.isbn(class="form-control") }}
+                            {% for e in form.isbn.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.author.label.text }}</label>
+                            {{ form.author(class="form-control") }}
+                            {% for e in form.author.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.category.label.text }}</label>
+                            {{ form.category(class="form-select") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.total_copies.label.text }}</label>
+                            {{ form.total_copies(class="form-control") }}
+                            {% for e in form.total_copies.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.publisher.label.text }}</label>
+                            {{ form.publisher(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.year.label.text }}</label>
+                            {{ form.year(class="form-control") }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">{{ form.description.label.text }}</label>
+                            {{ form.description(class="form-control", rows=3) }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        {{ form.submit(class="btn btn-warning btn-lg") }}
+                        <a href="{{ url_for('admin.books') }}" class="btn btn-outline-secondary btn-lg ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

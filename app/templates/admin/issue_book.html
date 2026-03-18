@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Issue Book – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-box-arrow-right me-2"></i>Issue a Book</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">
+                            <i class="bi bi-person me-1"></i> {{ form.student_roll.label.text }}
+                        </label>
+                        {{ form.student_roll(class="form-control form-control-lg", placeholder="e.g. CS2024001") }}
+                        {% for e in form.student_roll.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        <small class="text-muted">Enter the student's college roll number</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">
+                            <i class="bi bi-book me-1"></i> {{ form.book_isbn.label.text }}
+                        </label>
+                        {{ form.book_isbn(class="form-control form-control-lg", placeholder="Enter ISBN or book title") }}
+                        {% for e in form.book_isbn.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        <small class="text-muted">Enter the book's ISBN number or search by title</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>Note:</strong> Due date will be automatically set to 14 days from today.
+                        <br>Maximum 3 active issues per student.
+                    </div>
+
+                    <div class="mt-4">
+                        {{ form.submit(class="btn btn-warning btn-lg w-100") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

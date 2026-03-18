@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Students – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="bi bi-people me-2"></i>Student Management</h3>
+    <a href="{{ url_for('admin.add_student') }}" class="btn btn-success">
+        <i class="bi bi-person-plus me-1"></i> Register Student
+    </a>
+</div>
+
+<!-- Search -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.students') }}" class="row g-3">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Search by name, roll number or department..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-funnel me-1"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Students Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="studentsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Roll No.</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>Phone</th>
+                        <th>Active Issues</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td><code>{{ student.student_id }}</code></td>
+                        <td class="fw-medium">{{ student.user.name }}</td>
+                        <td>{{ student.user.email }}</td>
+                        <td><span class="badge bg-secondary">{{ student.department }}</span></td>
+                        <td>{{ student.year }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>
+                            {% set active = student.transactions|selectattr('status', 'ne', 'returned')|list|length %}
+                            <span class="badge {{ 'bg-warning' if active > 0 else 'bg-light text-dark' }}">{{ active }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.view_student', id=student.id) }}"
+                               class="btn btn-sm btn-outline-info me-1" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('admin.edit_student', id=student.id) }}"
+                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

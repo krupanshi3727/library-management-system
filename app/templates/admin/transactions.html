@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Transactions – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="bi bi-arrow-left-right me-2"></i>Transactions</h3>
+    <a href="{{ url_for('admin.issue_book') }}" class="btn btn-warning">
+        <i class="bi bi-box-arrow-right me-1"></i> Issue Book
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.transactions') }}" class="row g-3">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Search by book title or roll number..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="all" {{ 'selected' if status_filter == 'all' }}>All Statuses</option>
+                    <option value="issued" {{ 'selected' if status_filter == 'issued' }}>Issued</option>
+                    <option value="returned" {{ 'selected' if status_filter == 'returned' }}>Returned</option>
+                    <option value="overdue" {{ 'selected' if status_filter == 'overdue' }}>Overdue</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="transactionsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Book</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr class="{{ 'table-danger' if txn.status == 'overdue' else '' }}">
+                        <td>{{ txn.id }}</td>
+                        <td>
+                            {{ txn.student.user.name }}<br>
+                            <small class="text-muted">{{ txn.student.student_id }}</small>
+                        </td>
+                        <td class="fw-medium">{{ txn.book.title }}</td>
+                        <td>{{ txn.issue_date.strftime('%d %b %Y') }}</td>
+                        <td>{{ txn.due_date.strftime('%d %b %Y') }}</td>
+                        <td>{{ txn.return_date.strftime('%d %b %Y') if txn.return_date else '—' }}</td>
+                        <td>
+                            {% if txn.status == 'issued' %}
+                                <span class="badge bg-primary">Issued</span>
+                            {% elif txn.status == 'returned' %}
+                                <span class="badge bg-success">Returned</span>
+                            {% elif txn.status == 'overdue' %}
+                                <span class="badge bg-danger pulse-badge">Overdue</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if txn.calculated_fine > 0 %}
+                                <span class="text-danger fw-bold">₹{{ txn.calculated_fine|int }}</span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if txn.status != 'returned' %}
+                            <form method="POST" action="{{ url_for('admin.return_book', transaction_id=txn.id) }}"
+                                  style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-check-lg me-1"></i> Return
+                                </button>
+                            </form>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">No transactions found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Add Student – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Students
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Register New Student</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.name.label.text }}</label>
+                            {{ form.name(class="form-control", placeholder="Full name") }}
+                            {% for e in form.name.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.email.label.text }}</label>
+                            {{ form.email(class="form-control", placeholder="student@college.edu") }}
+                            {% for e in form.email.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.password.label.text }}</label>
+                            {{ form.password(class="form-control", placeholder="Min 6 characters") }}
+                            {% for e in form.password.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">{{ form.student_id.label.text }}</label>
+                            {{ form.student_id(class="form-control", placeholder="e.g. CS2024001") }}
+                            {% for e in form.student_id.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.department.label.text }}</label>
+                            {{ form.department(class="form-select") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.year.label.text }}</label>
+                            {{ form.year(class="form-control", placeholder="1-6") }}
+                            {% for e in form.year.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">{{ form.phone.label.text }}</label>
+                            {{ form.phone(class="form-control", placeholder="Phone number") }}
+                            {% for e in form.phone.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Student Profile – LibraryMS{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Students
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Student Info Card -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-person-circle display-1 text-primary"></i>
+                </div>
+                <h4 class="fw-bold">{{ student.user.name }}</h4>
+                <p class="text-muted mb-1"><i class="bi bi-hash"></i> {{ student.student_id }}</p>
+                <p class="text-muted mb-1"><i class="bi bi-envelope"></i> {{ student.user.email }}</p>
+                <p class="text-muted mb-1"><i class="bi bi-phone"></i> {{ student.phone }}</p>
+                <p class="mb-1"><span class="badge bg-secondary">{{ student.department }}</span></p>
+                <p class="text-muted">Year {{ student.year }}</p>
+                <a href="{{ url_for('admin.edit_student', id=student.id) }}"
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil me-1"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Quick Stats</h6>
+                {% set active = student.transactions|selectattr('status', 'ne', 'returned')|list|length %}
+                {% set total = student.transactions|length %}
+                {% set overdue = student.transactions|selectattr('status', 'equalto', 'overdue')|list|length %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Total Borrowed</span>
+                    <span class="fw-bold">{{ total }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Currently Issued</span>
+                    <span class="fw-bold text-primary">{{ active }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Overdue</span>
+                    <span class="fw-bold text-danger">{{ overdue }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Borrowing History -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-clock-history me-1"></i> Borrowing History
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Book</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Fine</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for txn in student.transactions %}
+                            <tr>
+                                <td class="fw-medium">{{ txn.book.title }}</td>
+                                <td>{{ txn.issue_date.strftime('%d %b %Y') }}</td>
+                                <td>{{ txn.due_date.strftime('%d %b %Y') }}</td>
+                                <td>{{ txn.return_date.strftime('%d %b %Y') if txn.return_date else '—' }}</td>
+                                <td>
+                                    {% if txn.status == 'issued' %}
+                                        <span class="badge bg-primary">Issued</span>
+                                    {% elif txn.status == 'returned' %}
+                                        <span class="badge bg-success">Returned</span>
+                                    {% elif txn.status == 'overdue' %}
+                                        <span class="badge bg-danger">Overdue</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if txn.calculated_fine > 0 %}
+                                        <span class="text-danger fw-bold">₹{{ txn.calculated_fine|int }}</span>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if txn.status != 'returned' %}
+                                    <form method="POST" action="{{ url_for('admin.return_book', transaction_id=txn.id) }}"
+                                          style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No borrowing history.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
